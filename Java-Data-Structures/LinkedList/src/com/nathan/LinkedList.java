@@ -1,70 +1,73 @@
 package com.nathan;
 
+import java.util.NoSuchElementException;
+
 public class LinkedList {
     private Node first;
     private Node last;
+    private int count;
 
     public LinkedList() {
     }
 
     public void addFirst(int value) {
         // 0 node
-        if (first == null) {
-            initiateFirstNode(value);
-        }
+        if (first == null)
+            first = last = new Node(value);
         // 1+ nodes
-        else {
+        else
             first = new Node(value, first);
-        }
+        count++;
     }
 
     public void addLast(int value) {
-        // 0 node
-        if (first == null) {
-            initiateFirstNode(value);
-        }
-        // 1 node
-        else if (first.getNext() == null) {
-            last = new Node(value);
-            first.setNext(last);
-        }
-        // 2+ node
+        Node node = new Node(value);
+        if (first == null)
+            first = last = node;
         else {
-            Node newNode = new Node(value);
-            last.setNext(newNode);
-            last = newNode;
+            last.setNext(node);
+            last = node;
         }
-    }
-
-    private void initiateFirstNode(int value) {
-        first = new Node(value);
-        last = first;
+        count++;
     }
 
     public void deleteFirst() {
-        Node newFirst = first.getNext();
-        first.setNext(null);
-        first = newFirst;
+        if (first == null)
+            throw new NoSuchElementException();
+        if (first == last) {
+            first = last = null;
+        } else {
+            Node node = first.getNext();
+            first.setNext(null);
+            first = node;
+        }
+        count--;
     }
 
     public void deleteLast() {
         // 0 node
         if (first == null) {
-            throw new RuntimeException("0 node");
+            throw new NoSuchElementException();
         }
-        // 1 node
-        if (!first.hasNext()) {
-            first = null;
-            last = null;
-        }
+        Node secondLast = getPrevious(last);
+        secondLast.setNext(null);
+        last = secondLast;
+        count--;
+    }
 
-        // 2+ node
-        Node thisNode = first;
-        while (thisNode.getNext() != last) {
-            thisNode = thisNode.getNext();
+    public Node getPrevious(Node node) {
+        Node current = first;
+        if (first == null) {
+            return null;
         }
-        thisNode.setNext(null);
-        last = thisNode;
+        while (current.getNext() != null) {
+            if (current.getNext() != node)
+                current = current.getNext();
+            else
+                return current;
+        }
+        return null;
+
     }
 
     public boolean contains(int value) {
@@ -87,6 +90,33 @@ public class LinkedList {
             index++;
         }
         return -1;
+    }
+
+    public int[] toArray() {
+        int[] nums = new int[count];
+        Node current = first;
+        int index = 0;
+        while (current != null) {
+            nums[index] = current.getValue();
+            current = current.getNext();
+            index++;
+        }
+        return nums;
+    }
+
+    public void reverse() {
+        if (count > 1) {
+            int[] nums = toArray();
+            last = first = null;
+            count = 0;
+            for (int num : nums) {
+                addFirst(num);
+            }
+        }
+    }
+
+    public int size() {
+        return count;
     }
 
     @Override

@@ -20,5 +20,9 @@ public class Main {
         System.out.println(linkedList.contains(1));
         System.out.println(linkedList.indexOf(40));
         System.out.println(linkedList.indexOf(1));
+        System.out.println(linkedList.size());
+        linkedList.reverse();
+        System.out.println(linkedList.toString());
+        System.out.println(linkedList.size());
     }
 }
